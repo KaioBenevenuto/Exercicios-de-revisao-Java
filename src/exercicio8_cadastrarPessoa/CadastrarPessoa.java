@@ -1,7 +1,6 @@
 package exercicio8_cadastrarPessoa;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 import java.util.Scanner;
 

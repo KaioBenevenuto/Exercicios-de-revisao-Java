@@ -29,7 +29,7 @@ public class BuscarPessoa {
 			System.out.println(nomes.get(i));
 		}
 		
-		System.out.print("Digite um nome para buscar na lista: ");
+		System.out.print("\nDigite um nome para buscar na lista: ");
 		nomeDigitado = scan.nextLine();
 		
 		for (int i = 0; i < nomes.size(); i++) {
@@ -39,5 +39,6 @@ public class BuscarPessoa {
 			
 		}
 	}
+	
 	
 }
