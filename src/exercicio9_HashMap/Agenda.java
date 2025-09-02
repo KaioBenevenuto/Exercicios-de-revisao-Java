@@ -1,4 +1,4 @@
-package exercicio9_HashMap;
+package exercicio9_hashMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +24,7 @@ public class Agenda {
 		System.out.println("Para buscar um contato              [2]");
 		System.out.println("Para remover um contato             [3]");
 		System.out.println("Para listar todos os contatos       [4]");
+		System.out.println("Para editar um contato              [5]");
 		System.out.println("Para encerrar o sistema             [0]");
 		System.out.println("========================================");
 		System.out.print("~ ");
@@ -40,6 +41,9 @@ public class Agenda {
 			tela();
 		} else if(digito == 4) {
 			listContato();
+			tela();
+		} else if(digito == 5) {
+			editContato();
 			tela();
 		} else if(digito == 0){
 			System.out.print("\nEncerrando.. ... . ..");
@@ -66,9 +70,10 @@ public class Agenda {
 		System.out.print("A sua idade: ");
 		idade = scanAdd.nextInt();
 		System.out.print("O seu cpf: ");
-		cpf = scanAdd.nextLine();
-		cpf = scanAdd.nextLine();
-		//Por algum motivo esse aqui só funciona se eu chamar 2x
+		do {
+			cpf = scanAdd.nextLine();
+		}while(cpf == "");
+		//Por algum motivo esse aqui está ignorando o Scaner, usando o "do/while" eu garanto que o cpf receba o valor
 		System.out.print("O número de telefone dele(a): ");
 		telefone.add(scanAdd.nextInt());
 		do {
@@ -83,8 +88,7 @@ public class Agenda {
 		}while(resposta != 'n');
 		
 		Random random = new Random();
-		id = random.nextInt();
-		System.out.println("========================================");
+		id =  random.nextInt(1000000000);
 		
 		
 		//Usei o método construtor da classe Pessoa para setar os valores dessa vez
@@ -148,7 +152,7 @@ public class Agenda {
 		System.out.println("========================================");
 		
 		for (Pessoa pessoa: pessoas.values()) {
-			System.out.print("\nNome: " + pessoa.getNome() + " | Idade: " + pessoa.getIdade() + " | Cpf: " + pessoa.getCpf() +  " | Id: " + pessoa.getId() + " | Telefone(s): ");
+			System.out.print("Nome: " + pessoa.getNome() + " | Idade: " + pessoa.getIdade() + " | Cpf: " + pessoa.getCpf() +  " | Id: " + pessoa.getId() + " | Telefone(s): ");
 			pessoa.getTelefone();
 			System.out.println();
 			
@@ -159,6 +163,167 @@ public class Agenda {
 		}
 		
 	}
+	
+	public void editContato() {
+		Scanner scanEdit = new Scanner(System.in);
+		String cpf = "", nomeEditado = "", cpfEditado ="";
+		int digito = 2, idadeEditada = 0, telefoneEdit = 0;
+		
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+		System.out.println("========================================");
+		System.out.println("             Editar contato             ");
+		System.out.println("========================================");
+		System.out.print("Digite o cpf do contato: ");
+		cpf = scanEdit.nextLine();
+		
+		//Edita o nome
+		nomeEditado = alterarNome(digito, scanEdit, cpf, nomeEditado);
+		
+		//Edita a idade
+		idadeEditada = alterarIdade(digito, scanEdit, cpf, idadeEditada);
+		
+		//Edita o cpf
+		cpfEditado = alterarCpf(digito, scanEdit, cpf, cpfEditado);
+		
+		//Adiciona um novo telefone
+		do {
+			digito = addNewTelefone(digito, scanEdit, cpf);
+		} while(digito != 1);
+		
+		//Edita um telefone existente
+		do {
+			digito = editTelefone(digito, scanEdit, cpf);
+		} while(digito != -1);
+		
+		//Remove um telefone existente
+		do {
+			digito = removeTelefone(digito, scanEdit, cpf);
+		} while(digito != -1);
+		
+		//Re-cria o contato
+		//Mudou o cpf, tem que apagar tudo e criar um novo contato com a nova chave, já que não tem como mudar chave
+		if(cpfEditado != "") {
+			Pessoa pessoa = new Pessoa(pessoas.get(cpf).getId(), pessoas.get(cpf).getIdade(), cpfEditado, pessoas.get(cpf).getNome(), pessoas.get(cpf).getAllTelefone());
+			pessoas.put(cpfEditado, pessoa);
+			pessoas.remove(cpf);
+		}
+	}
+	
+	public String alterarNome(int digito, Scanner scanEdit, String cpf, String nomeEditado){
+		System.out.println("Deseja alterar o nome do contato?");
+		System.out.println("    Sim [0]        Não [1]");
+		System.out.print("~ ");
+		digito = scanEdit.nextInt();
+		if(digito != 1 && digito != 0) {
+			return nomeEditado = alterarNome(digito, scanEdit, cpf, nomeEditado);
+		} else if (digito == 0) {
+			System.out.println("Digite o novo nome");
+			System.out.print("~ ");
+			do {
+			 nomeEditado = scanEdit.nextLine();
+			} while(nomeEditado=="");
+			pessoas.get(cpf).setNome(nomeEditado);
+			return nomeEditado;
+		}
+		return nomeEditado;
+	}
+	
+	public int alterarIdade(int digito, Scanner scanEdit, String cpf, int idadeEditada){
+		System.out.println("Deseja alterar a idade do contato?");
+		System.out.println("    Sim [0]        Não [1]");
+		System.out.print("~ ");
+		digito = scanEdit.nextInt();
+		if(digito != 1 && digito != 0) {
+			return idadeEditada = alterarIdade(digito, scanEdit, cpf, idadeEditada);
+		} else if (digito == 0) {
+			System.out.println("Digite a novo idade");
+			System.out.print("~ ");
+			idadeEditada = scanEdit.nextInt();
+			pessoas.get(cpf).setIdade(idadeEditada);
+			return idadeEditada;
+		}
+		return idadeEditada;
+	}
+
+	public String alterarCpf(int digito, Scanner scanEdit, String cpf, String cpfEditado){
+		System.out.println("Deseja alterar o cpf do contato?");
+		System.out.println("    Sim [0]        Não [1]");
+		System.out.print("~ ");
+		digito = scanEdit.nextInt();
+		if(digito != 1 && digito != 0) {
+			return cpfEditado = alterarCpf(digito, scanEdit, cpf, cpfEditado);
+		} else if (digito == 0) {
+			System.out.println("Digite o novo cpf");
+			System.out.print("~ ");
+			do {
+				cpfEditado = scanEdit.nextLine();
+			} while(cpfEditado=="");
+			return cpfEditado;
+			//Se entrou aqui então nem adianta setar o valor no contato, agora é só copiar para criar uma nova conta com outra chave
+		}
+		return cpfEditado;
+	}
+	
+	public int addNewTelefone(int digito, Scanner scanEdit, String cpf){
+		System.out.println("Deseja adicionar um novo telefone?");
+		System.out.println("    Sim [0]        Não [1]");
+		System.out.print("~ ");
+		digito = scanEdit.nextInt();
+		if(digito != 1 && digito != 0) {
+			return digito = addNewTelefone(digito, scanEdit, cpf);
+		} else if (digito == 0) {
+			ArrayList<Integer> tel = new ArrayList<Integer>();
+			System.out.println("Digite o novo telefone");
+			System.out.print("~ ");
+			tel.add(scanEdit.nextInt());
+			pessoas.get(cpf).setTelefone(tel);
+			return digito;
+		}
+		return digito;
+	}
+	
+	public int editTelefone(int digito, Scanner scanEdit, String cpf) {
+		System.out.println("======================================");
+		System.out.println("        Telefones desse contato       ");
+		System.out.println("======================================");
+		
+		pessoas.get(cpf).getIndexJuntoComTelefone();
+		
+		System.out.println("Digite o número que indica o telefone que você quer editar, caso não queira editar nenhum telefone digite [-1]");
+		System.out.print("~ ");
+		digito = scanEdit.nextInt();
+		if(digito != -1 && digito < 0 || digito > pessoas.get(cpf).getTamanhoArrayListTelefone()) {
+			return digito = editTelefone(digito, scanEdit, cpf);
+			
+		} else if (digito > -1 && digito < pessoas.get(cpf).getTamanhoArrayListTelefone()) {
+			System.out.println("Digite o número de telefone");
+			System.out.print("~ ");
+			pessoas.get(cpf).setTelefonePosition(digito, scanEdit.nextInt());
+			return digito;
+		}
+		return digito;
+	}
+	
+	public int removeTelefone(int digito, Scanner scanEdit, String cpf) {
+		System.out.println("======================================");
+		System.out.println("        Telefones desse contato       ");
+		System.out.println("======================================");
+		
+		pessoas.get(cpf).getIndexJuntoComTelefone();
+		
+		System.out.println("Digite o número que indica o telefone que você quer remover, caso não queira remover nenhum telefone digite [-1]");
+		System.out.print("~ ");
+		digito = scanEdit.nextInt();
+		if(digito != -1 && digito < 0 || digito > pessoas.get(cpf).getTamanhoArrayListTelefone()) {
+			return digito = removeTelefone(digito, scanEdit, cpf);
+			
+		} else if (digito > -1 && digito < pessoas.get(cpf).getTamanhoArrayListTelefone()) {
+			pessoas.get(cpf).removeTelefonePosition(digito);
+			return digito;
+		}
+		return digito;
+	}
+	
 }
 
 		

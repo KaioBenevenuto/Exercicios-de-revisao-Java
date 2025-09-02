@@ -1,4 +1,4 @@
-package exercicio8_OrdenacaoDePessoas;
+package exercicio8_ordenacaoDePessoas_e_estatisticaDeIdadde;
 
 public class Pessoa {
 	private String nome;

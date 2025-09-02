@@ -1,4 +1,4 @@
-package exercicio8_OrdenacaoDePessoas;
+package exercicio8_ordenacaoDePessoas_e_estatisticaDeIdadde;
 
 import java.util.ArrayList;
 import java.util.Collection;
