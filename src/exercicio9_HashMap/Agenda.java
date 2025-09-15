@@ -2,11 +2,14 @@ package exercicio9_hashMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Agenda {
 	HashMap<String, Pessoa> pessoas = new HashMap<String, Pessoa>();
+	HashMap <Integer, ArrayList> pessoasIdade = new HashMap <Integer, ArrayList>();
 	Scanner scan = new Scanner(System.in);
 	
 	public static void main(String args[]) {
@@ -25,6 +28,7 @@ public class Agenda {
 		System.out.println("Para remover um contato             [3]");
 		System.out.println("Para listar todos os contatos       [4]");
 		System.out.println("Para editar um contato              [5]");
+		System.out.println("Para listar os contatos por idade   [6]");
 		System.out.println("Para encerrar o sistema             [0]");
 		System.out.println("========================================");
 		System.out.print("~ ");
@@ -45,6 +49,10 @@ public class Agenda {
 		} else if(digito == 5) {
 			editContato();
 			tela();
+		} else if(digito == 6) {
+			organizarContatoPorIdade();
+			listContatoPorIdade();
+			tela();
 		} else if(digito == 0){
 			System.out.print("\nEncerrando.. ... . ..");
 			scan.close();
@@ -54,6 +62,8 @@ public class Agenda {
 		}
 	}
 	
+	
+	//Métodos
 	public void addNewContato() {
 		Scanner scanAdd = new Scanner(System.in);
 		String nome = "", cpf = "", respostaString; 
@@ -209,6 +219,50 @@ public class Agenda {
 		}
 	}
 	
+	public int maiorIdade() {
+		int maiorIdade = 1, i;
+		for(Pessoa pessoa:pessoas.values()) {
+			if(maiorIdade < pessoa.getIdade()) {
+				maiorIdade = pessoa.getIdade();
+			}
+		}
+		return maiorIdade;
+	}
+	
+	public void organizarContatoPorIdade() {
+		int idadeCopia=0;
+		for(int i=1; i <= maiorIdade(); i++) {
+			ArrayList pessoaPorIdadeTemporario = new ArrayList();
+			for(Pessoa pessoa:pessoas.values()) {
+				if(i == pessoa.getIdade()) {
+					pessoaPorIdadeTemporario.add(pessoa);
+					idadeCopia = pessoa.getIdade();
+				}
+			}
+			if(i == idadeCopia) {
+				pessoasIdade.put(i, pessoaPorIdadeTemporario);
+			}
+		}
+		
+	}
+	
+	//O gustavo falou de pecorrer o Array dentro de um Array
+	public void listContatoPorIdade() {
+		for(Entry<Integer, ArrayList> entry: pessoasIdade.entrySet()) {
+			ArrayList<Pessoa> pessoas = entry.getValue();
+			Integer chave = entry.getKey();
+			
+			System.out.println("Pessoas com " + chave + " anos");
+			for(Pessoa pessoa: pessoas) {
+				System.out.print("Id: "+ pessoa.getId() +"| Nome: "+pessoa.getNome() + " Cpf: " + pessoa.getCpf() + " Telefone(s): ");
+				pessoa.getTelefone();
+				System.out.println();
+			}
+		}
+	}		
+	
+	
+	//Alteradores de atributos
 	public String alterarNome(int digito, Scanner scanEdit, String cpf, String nomeEditado){
 		System.out.println("Deseja alterar o nome do contato?");
 		System.out.println("    Sim [0]        Não [1]");
@@ -325,6 +379,3 @@ public class Agenda {
 	}
 	
 }
-
-		
-
