@@ -246,7 +246,6 @@ public class Agenda {
 		
 	}
 	
-	//O gustavo falou de pecorrer o Array dentro de um Array
 	public void listContatoPorIdade() {
 		for(Entry<Integer, ArrayList> entry: pessoasIdade.entrySet()) {
 			ArrayList<Pessoa> pessoas = entry.getValue();
