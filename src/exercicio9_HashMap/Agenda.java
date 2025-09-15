@@ -2,6 +2,8 @@ package exercicio9_hashMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Scanner;
@@ -62,7 +64,6 @@ public class Agenda {
 		}
 	}
 	
-	
 	//Métodos
 	public void addNewContato() {
 		Scanner scanAdd = new Scanner(System.in);
@@ -77,12 +78,17 @@ public class Agenda {
 		System.out.println("========================================");
 		System.out.print("Digite o nome do contato: ");
 		nome = scanAdd.nextLine();
+		
 		System.out.print("A sua idade: ");
 		idade = scanAdd.nextInt();
-		System.out.print("O seu cpf: ");
+		
 		do {
-			cpf = scanAdd.nextLine();
-		}while(cpf == "");
+			System.out.print("O seu cpf: ");
+			do {
+				cpf = scanAdd.nextLine();
+			}while(cpf.equals(""));
+		}while(verificaCpf(cpf));
+		
 		//Por algum motivo esse aqui está ignorando o Scaner, usando o "do/while" eu garanto que o cpf receba o valor
 		System.out.print("O número de telefone dele(a): ");
 		telefone.add(scanAdd.nextInt());
@@ -135,7 +141,7 @@ public class Agenda {
 	
 	public void removeContato() {
 		Scanner scanRemove = new Scanner(System.in);
-		String cpf = "";
+		String cpf = "", cpfApagar = "";
 		boolean portaAberta = true;
 		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 		System.out.println("========================================");
@@ -144,15 +150,28 @@ public class Agenda {
 		System.out.print("Digite o cpf do contato: ");
 		cpf = scanRemove.nextLine();
 		
-		for (Pessoa pessoa: pessoas.values()) {
-			if(pessoa.getCpf().equals(cpf)) {
-				pessoas.remove(cpf);
-				portaAberta = false;
+		try {
+			Iterator<Map.Entry<String, Pessoa>> it = pessoas.entrySet().iterator();
+			while (it.hasNext()) {
+			    Map.Entry<String, Pessoa> entry = it.next();
+			    if (entry.getValue().getCpf().equals(cpf)) {
+			        cpfApagar = cpf;
+			        portaAberta = false;
+			    }
+			}
+			
+			if(!cpfApagar.equals("")) {
+				pessoas.remove(cpfApagar);
+			}
+			
+			if(portaAberta) {
+				System.out.println("Esse contato não foi cadastrado no sistema");
 			}
 		}
-		if(portaAberta) {
-			System.out.println("Esse contato não foi cadastrado no sistema");
+		catch (Exception e) {
+			System.out.println("Erro! Tente novamente.");
 		}
+		
 	}
 		
 	public void listContato() {
@@ -306,11 +325,14 @@ public class Agenda {
 		if(digito != 1 && digito != 0) {
 			return cpfEditado = alterarCpf(digito, scanEdit, cpf, cpfEditado);
 		} else if (digito == 0) {
-			System.out.println("Digite o novo cpf");
-			System.out.print("~ ");
 			do {
-				cpfEditado = scanEdit.nextLine();
-			} while(cpfEditado=="");
+				Scanner scan = new Scanner(System.in);
+				System.out.println("Digite o novo cpf");
+				System.out.print("~ ");
+				do {
+					cpfEditado = scan.nextLine();
+				}while(cpf.equals(""));
+			}while(verificaCpf(cpfEditado));
 			return cpfEditado;
 			//Se entrou aqui então nem adianta setar o valor no contato, agora é só copiar para criar uma nova conta com outra chave
 		}
@@ -375,6 +397,21 @@ public class Agenda {
 			return digito;
 		}
 		return digito;
+	}
+	
+	public Boolean verificaCpf(String cpf) {
+		int temPessoasComMesmoCpf = 0;
+		for (Pessoa pessoas : pessoas.values()) {
+			if(cpf.equals(pessoas.getCpf())) {
+				temPessoasComMesmoCpf++;
+			}
+		}
+		if(temPessoasComMesmoCpf == 0) {
+			return false;
+		} else {
+			System.out.println("Esse cpf já está cadastrado no sistema!");
+			return true;
+		}
 	}
 	
 }
